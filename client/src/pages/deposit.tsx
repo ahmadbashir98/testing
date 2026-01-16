@@ -67,7 +67,7 @@ const PAYMENT_ACCOUNTS = {
   bank: {
     name: "Bank Transfer",
     accountTitle: "CloudFire Pvt Ltd - MBC",
-    accountNumber: "157862073105409",
+    accountNumber: "1578620731005409",
     icon: Building2,
     color: "from-blue-500 to-blue-600",
     bgColor: "bg-blue-500/20",
