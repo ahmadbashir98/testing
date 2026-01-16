@@ -39,7 +39,7 @@ import type { z } from "zod";
 const PAYMENT_ACCOUNTS = {
   easypaisa: {
     name: "Easypaisa",
-    accountNumber: "03043556070",
+    accountNumber: "03425809569",
     accountTitle: "CloudFire Services",
     icon: Smartphone,
     color: "from-green-500 to-green-600",
@@ -48,7 +48,7 @@ const PAYMENT_ACCOUNTS = {
   },
   jazzcash: {
     name: "JazzCash",
-    accountNumber: "03043556070",
+    accountNumber: "03098249979",
     accountTitle: "CloudFire Services",
     icon: Smartphone,
     color: "from-red-500 to-red-600",
@@ -57,7 +57,7 @@ const PAYMENT_ACCOUNTS = {
   },
   crypto: {
     name: "Crypto",
-    accountNumber: "TRX: TYourWalletAddressHere",
+    accountNumber: "TRX: TRwFgkkk84nCb8q26S946BDMYuDtQ2PMNU",
     accountTitle: "USDT TRC20",
     icon: Bitcoin,
     color: "from-amber-500 to-amber-600",
@@ -66,8 +66,8 @@ const PAYMENT_ACCOUNTS = {
   },
   bank: {
     name: "Bank Transfer",
-    accountNumber: "1234567890123",
-    accountTitle: "CloudFire Pvt Ltd - HBL",
+    accountTitle: "CloudFire Pvt Ltd - MBC",
+    accountNumber: "157862073105409",
     icon: Building2,
     color: "from-blue-500 to-blue-600",
     bgColor: "bg-blue-500/20",
@@ -75,6 +75,7 @@ const PAYMENT_ACCOUNTS = {
   },
 };
 
+// accountNumber: "1234567890123",
 type PaymentMethod = keyof typeof PAYMENT_ACCOUNTS;
 type DepositFormData = z.infer<typeof depositFormSchema>;
 
