@@ -3,10 +3,12 @@ import fs from "fs";
 import path from "path";
 
 export function serveStatic(app: Express) {
- const distPath = path.resolve(__dirname, "../dist/public");
+  // In production, the build outputs to dist/index.cjs, and public files are in dist/public
+  // When bundled, __dirname is not reliable, so we use process.cwd()
+  const distPath = path.resolve(process.cwd(), "dist", "public");
   if (!fs.existsSync(distPath)) {
     throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
+      `Could not find the build directory: ${distPath}, make sure to build the client first`
     );
   }
 
@@ -17,3 +19,19 @@ export function serveStatic(app: Express) {
     res.sendFile(path.resolve(distPath, "index.html"));
   });
 }
+
+// export function serveStatic(app: Express) {
+//  const distPath = path.resolve(__dirname, "../dist/public");
+//   if (!fs.existsSync(distPath)) {
+//     throw new Error(
+//       `Could not find the build directory: ${distPath}, make sure to build the client first`,
+//     );
+//   }
+
+//   app.use(express.static(distPath));
+
+//   // fall through to index.html if the file doesn't exist
+//   app.use("*", (_req, res) => {
+//     res.sendFile(path.resolve(distPath, "index.html"));
+//   });
+// }
