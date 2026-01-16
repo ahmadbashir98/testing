@@ -10,7 +10,6 @@ import Signup from "@/pages/signup";
 import Dashboard from "@/pages/dashboard";
 import Machines from "@/pages/machines";
 import Payments from "@/pages/payments";
-import Team from "@/pages/team";
 import Profile from "@/pages/profile";
 import Admin from "@/pages/admin";
 import History from "@/pages/history";
@@ -19,7 +18,11 @@ import Deposit from "@/pages/deposit";
 import { Loader2 } from "lucide-react";
 import { InstallPrompt } from "@/components/install-prompt";
 
-function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
+function ProtectedRoute({
+  component: Component,
+}: {
+  component: React.ComponentType;
+}) {
   const { user, isLoading } = useAuth();
   const [, setLocation] = useLocation();
 
@@ -39,7 +42,11 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
   return <Component />;
 }
 
-function PublicRoute({ component: Component }: { component: React.ComponentType }) {
+function PublicRoute({
+  component: Component,
+}: {
+  component: React.ComponentType;
+}) {
   const { user, isLoading } = useAuth();
   const [, setLocation] = useLocation();
 
@@ -82,9 +89,6 @@ function Router() {
       </Route>
       <Route path="/deposit">
         <ProtectedRoute component={Deposit} />
-      </Route>
-      <Route path="/team">
-        <ProtectedRoute component={Team} />
       </Route>
       <Route path="/profile">
         <ProtectedRoute component={Profile} />

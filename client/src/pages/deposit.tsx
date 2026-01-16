@@ -1,26 +1,6 @@
-import { useState, useRef } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useLocation } from "wouter";
-import {
-  ArrowLeft,
-  Bell,
-  Smartphone,
-  Bitcoin,
-  Building2,
-  Loader2,
-  Copy,
-  Check,
-  Upload,
-  Image,
-  AlertCircle,
-  DollarSign,
-  ChevronRight,
-} from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { BottomNav } from "@/components/bottom-nav";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -28,18 +8,37 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { BottomNav } from "@/components/bottom-nav";
-import { useAuth } from "@/lib/auth";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/lib/auth";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { depositFormSchema, EXCHANGE_RATES } from "@shared/schema";
+import { useMutation } from "@tanstack/react-query";
+import {
+  AlertCircle,
+  ArrowLeft,
+  Bell,
+  Bitcoin,
+  Building2,
+  Check,
+  ChevronRight,
+  Copy,
+  DollarSign,
+  Loader2,
+  Smartphone,
+  Upload,
+} from "lucide-react";
+import { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useLocation } from "wouter";
 import type { z } from "zod";
 
 // Dynamic payment account configuration - easily changeable
 const PAYMENT_ACCOUNTS = {
   easypaisa: {
     name: "Easypaisa",
-    accountNumber: "03425809569",
+    accountNumber: "03043556070",
     accountTitle: "CloudFire Services",
     icon: Smartphone,
     color: "from-green-500 to-green-600",
@@ -48,7 +47,7 @@ const PAYMENT_ACCOUNTS = {
   },
   jazzcash: {
     name: "JazzCash",
-    accountNumber: "03098249979",
+    accountNumber: "03043556070",
     accountTitle: "CloudFire Services",
     icon: Smartphone,
     color: "from-red-500 to-red-600",
@@ -57,7 +56,7 @@ const PAYMENT_ACCOUNTS = {
   },
   crypto: {
     name: "Crypto",
-    accountNumber: "TRX: TRwFgkkk84nCb8q26S946BDMYuDtQ2PMNU",
+    accountNumber: "TRX: TYourWalletAddressHere",
     accountTitle: "USDT TRC20",
     icon: Bitcoin,
     color: "from-amber-500 to-amber-600",
@@ -66,8 +65,8 @@ const PAYMENT_ACCOUNTS = {
   },
   bank: {
     name: "Bank Transfer",
-    accountTitle: "CloudFire Pvt Ltd - MBC",
-    accountNumber: "1578620731005409",
+    accountNumber: "1234567890123",
+    accountTitle: "CloudFire Pvt Ltd - HBL",
     icon: Building2,
     color: "from-blue-500 to-blue-600",
     bgColor: "bg-blue-500/20",
@@ -75,7 +74,6 @@ const PAYMENT_ACCOUNTS = {
   },
 };
 
-// accountNumber: "1234567890123",
 type PaymentMethod = keyof typeof PAYMENT_ACCOUNTS;
 type DepositFormData = z.infer<typeof depositFormSchema>;
 
@@ -83,7 +81,8 @@ export default function Deposit() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [, navigate] = useLocation();
-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>("easypaisa");
+  const [selectedMethod, setSelectedMethod] =
+    useState<PaymentMethod>("easypaisa");
   const [copied, setCopied] = useState(false);
   const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -159,9 +158,14 @@ export default function Deposit() {
   };
 
   const copyAccountNumber = async () => {
-    await navigator.clipboard.writeText(PAYMENT_ACCOUNTS[selectedMethod].accountNumber);
+    await navigator.clipboard.writeText(
+      PAYMENT_ACCOUNTS[selectedMethod].accountNumber
+    );
     setCopied(true);
-    toast({ title: "Copied!", description: "Account number copied to clipboard" });
+    toast({
+      title: "Copied!",
+      description: "Account number copied to clipboard",
+    });
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -176,7 +180,10 @@ export default function Deposit() {
 
   const onSubmit = (data: DepositFormData) => {
     if (!screenshotUrl) {
-      toast({ title: "Please upload payment screenshot", variant: "destructive" });
+      toast({
+        title: "Please upload payment screenshot",
+        variant: "destructive",
+      });
       return;
     }
     depositMutation.mutate(data);
@@ -191,7 +198,9 @@ export default function Deposit() {
       <header className="sticky top-0 z-50 bg-purple-950/80 backdrop-blur-lg border-b border-purple-800/30">
         <div className="flex items-center justify-between px-4 py-4 max-w-lg mx-auto">
           <button
-            onClick={() => step === "details" ? setStep("select") : navigate("/payments")}
+            onClick={() =>
+              step === "details" ? setStep("select") : navigate("/payments")
+            }
             className="p-2 rounded-full hover:bg-purple-800/50 transition-colors"
             data-testid="button-back"
           >
@@ -212,36 +221,46 @@ export default function Deposit() {
           <>
             {/* Payment Method Grid */}
             <div>
-              <h2 className="text-lg font-semibold text-white mb-4">Select Payment Method</h2>
+              <h2 className="text-lg font-semibold text-white mb-4">
+                Select Payment Method
+              </h2>
               <div className="grid grid-cols-2 gap-4">
-                {(Object.keys(PAYMENT_ACCOUNTS) as PaymentMethod[]).map((method) => {
-                  const account = PAYMENT_ACCOUNTS[method];
-                  const Icon = account.icon;
-                  const isSelected = selectedMethod === method;
+                {(Object.keys(PAYMENT_ACCOUNTS) as PaymentMethod[]).map(
+                  (method) => {
+                    const account = PAYMENT_ACCOUNTS[method];
+                    const Icon = account.icon;
+                    const isSelected = selectedMethod === method;
 
-                  return (
-                    <button
-                      key={method}
-                      onClick={() => setSelectedMethod(method)}
-                      className={`relative p-4 rounded-2xl border-2 transition-all duration-200 ${
-                        isSelected
-                          ? `${account.borderColor} ${account.bgColor} scale-[1.02]`
-                          : "border-purple-700/50 bg-purple-900/30 hover:border-purple-600/70"
-                      }`}
-                      data-testid={`button-method-${method}`}
-                    >
-                      {isSelected && (
-                        <div className="absolute top-2 right-2 w-3 h-3 rounded-full bg-gradient-to-r from-green-400 to-green-500" />
-                      )}
-                      <div className={`w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br ${account.color} flex items-center justify-center`}>
-                        <Icon className="w-6 h-6 text-white" />
-                      </div>
-                      <p className={`text-sm font-medium ${isSelected ? "text-white" : "text-purple-200"}`}>
-                        {account.name}
-                      </p>
-                    </button>
-                  );
-                })}
+                    return (
+                      <button
+                        key={method}
+                        onClick={() => setSelectedMethod(method)}
+                        className={`relative p-4 rounded-2xl border-2 transition-all duration-200 ${
+                          isSelected
+                            ? `${account.borderColor} ${account.bgColor} scale-[1.02]`
+                            : "border-purple-700/50 bg-purple-900/30 hover:border-purple-600/70"
+                        }`}
+                        data-testid={`button-method-${method}`}
+                      >
+                        {isSelected && (
+                          <div className="absolute top-2 right-2 w-3 h-3 rounded-full bg-gradient-to-r from-green-400 to-green-500" />
+                        )}
+                        <div
+                          className={`w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br ${account.color} flex items-center justify-center`}
+                        >
+                          <Icon className="w-6 h-6 text-white" />
+                        </div>
+                        <p
+                          className={`text-sm font-medium ${
+                            isSelected ? "text-white" : "text-purple-200"
+                          }`}
+                        >
+                          {account.name}
+                        </p>
+                      </button>
+                    );
+                  }
+                )}
               </div>
             </div>
 
@@ -264,7 +283,9 @@ export default function Deposit() {
                             placeholder="0.00"
                             className="pl-12 pr-4 py-6 text-xl font-semibold bg-purple-900/50 border-purple-700/50 text-white placeholder:text-purple-500 rounded-2xl focus:border-purple-500 focus:ring-purple-500"
                             {...field}
-                            onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                            onChange={(e) =>
+                              field.onChange(parseFloat(e.target.value) || 0)
+                            }
                             data-testid="input-deposit-amount"
                           />
                         </FormControl>
@@ -276,8 +297,13 @@ export default function Deposit() {
               </Form>
               {watchedAmount > 0 && (
                 <p className="text-sm text-purple-300">
-                  PKR Required: <span className="font-bold text-white">Rs. {pkrRequired.toLocaleString()}</span>
-                  <span className="text-purple-400 ml-1">(Rate: 1 USD = {EXCHANGE_RATES.DEPOSIT_RATE} PKR)</span>
+                  PKR Required:{" "}
+                  <span className="font-bold text-white">
+                    Rs. {pkrRequired.toLocaleString()}
+                  </span>
+                  <span className="text-purple-400 ml-1">
+                    (Rate: 1 USD = {EXCHANGE_RATES.DEPOSIT_RATE} PKR)
+                  </span>
                 </p>
               )}
             </div>
@@ -310,7 +336,9 @@ export default function Deposit() {
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-2 h-2 mt-2 rounded-full bg-purple-400 shrink-0" />
-                    <span>Make payment to the account shown on next screen</span>
+                    <span>
+                      Make payment to the account shown on next screen
+                    </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-2 h-2 mt-2 rounded-full bg-purple-400 shrink-0" />
@@ -322,7 +350,9 @@ export default function Deposit() {
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-2 h-2 mt-2 rounded-full bg-amber-400 shrink-0" />
-                    <span className="text-amber-300">Minimum deposit: $5 USD</span>
+                    <span className="text-amber-300">
+                      Minimum deposit: $5 USD
+                    </span>
                   </li>
                 </ul>
               </CardContent>
@@ -338,16 +368,24 @@ export default function Deposit() {
                     <IconComponent className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-white font-bold text-lg">{selectedAccount.name}</p>
-                    <p className="text-white/80 text-sm">{selectedAccount.accountTitle}</p>
+                    <p className="text-white font-bold text-lg">
+                      {selectedAccount.name}
+                    </p>
+                    <p className="text-white/80 text-sm">
+                      {selectedAccount.accountTitle}
+                    </p>
                   </div>
                 </div>
               </div>
               <CardContent className="p-5 space-y-4">
                 <div>
-                  <p className="text-sm text-purple-300 mb-2">Send payment to:</p>
+                  <p className="text-sm text-purple-300 mb-2">
+                    Send payment to:
+                  </p>
                   <div className="flex items-center justify-between p-3 bg-purple-800/50 rounded-xl">
-                    <span className="text-white font-mono text-lg">{selectedAccount.accountNumber}</span>
+                    <span className="text-white font-mono text-lg">
+                      {selectedAccount.accountNumber}
+                    </span>
                     <button
                       onClick={copyAccountNumber}
                       className="p-2 rounded-lg bg-purple-700/50 hover:bg-purple-600/50 transition-colors"
@@ -365,11 +403,15 @@ export default function Deposit() {
                 <div className="p-4 bg-purple-800/30 rounded-xl">
                   <div className="flex justify-between text-sm">
                     <span className="text-purple-300">Deposit Amount</span>
-                    <span className="text-white font-bold">${watchedAmount.toFixed(2)}</span>
+                    <span className="text-white font-bold">
+                      ${watchedAmount.toFixed(2)}
+                    </span>
                   </div>
                   <div className="flex justify-between text-sm mt-2">
                     <span className="text-purple-300">PKR to Send</span>
-                    <span className="text-amber-400 font-bold">Rs. {pkrRequired.toLocaleString()}</span>
+                    <span className="text-amber-400 font-bold">
+                      Rs. {pkrRequired.toLocaleString()}
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -377,7 +419,10 @@ export default function Deposit() {
 
             {/* Transaction Details Form */}
             <Form {...depositForm}>
-              <form onSubmit={depositForm.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={depositForm.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 <FormField
                   control={depositForm.control}
                   name="transactionId"
@@ -435,8 +480,12 @@ export default function Deposit() {
                       ) : (
                         <div className="text-center">
                           <Upload className="w-8 h-8 mx-auto text-purple-400 mb-2" />
-                          <p className="text-purple-300 font-medium">Upload Payment Screenshot</p>
-                          <p className="text-purple-500 text-sm mt-1">Tap to browse files</p>
+                          <p className="text-purple-300 font-medium">
+                            Upload Payment Screenshot
+                          </p>
+                          <p className="text-purple-500 text-sm mt-1">
+                            Tap to browse files
+                          </p>
                         </div>
                       )}
                     </button>
