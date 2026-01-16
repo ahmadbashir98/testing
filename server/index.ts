@@ -61,6 +61,19 @@ app.use((req, res, next) => {
 
 // Setup the app with routes and static files
 (async () => {
+  // Always serve static files FIRST (both production and Vercel)
+  const isProduction =
+    process.env.NODE_ENV === "production" || process.env.VERCEL;
+
+  if (isProduction) {
+    serveStatic(app);
+  } else {
+    // Setup Vite dev server in development
+    const { setupVite } = await import("./vite");
+    await setupVite(httpServer, app);
+  }
+
+  // Then register API routes
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -70,15 +83,6 @@ app.use((req, res, next) => {
     res.status(status).json({ message });
     throw err;
   });
-
-  // Serve static files in production or when dist/public exists
-  if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
-    serveStatic(app);
-  } else {
-    // Setup Vite dev server in development
-    const { setupVite } = await import("./vite");
-    await setupVite(httpServer, app);
-  }
 
   // Start listening on the specified port
   // ALWAYS serve the app on the port specified in the environment variable PORT
