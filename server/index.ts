@@ -71,8 +71,8 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // Serve static files in production
-  if (process.env.NODE_ENV === "production") {
+  // Serve static files in production or when dist/public exists
+  if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
     serveStatic(app);
   } else {
     // Setup Vite dev server in development
